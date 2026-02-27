@@ -1705,6 +1705,13 @@
     </footer>
 
     <script>
+        // PostHog: fire a custom event when the landing page is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.posthog && typeof window.posthog.capture === 'function') {
+                posthog.capture('landing_page_loaded', { page: 'home', url: window.location.href });
+            }
+        });
+
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1787,6 +1794,9 @@
 
         // Function to open modal
         function openContactModal() {
+            if (window.posthog && typeof window.posthog.capture === 'function') {
+                posthog.capture('contact_modal_opened');
+            }
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden'; // Prevent background scrolling
         }
