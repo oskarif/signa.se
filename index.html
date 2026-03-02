@@ -12,6 +12,15 @@
         person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
     })
 </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NR606S1Q6D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-NR606S1Q6D');
+    </script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1413,7 +1422,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero grid-pattern">
+    <section id="hero" class="hero grid-pattern">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-title">
@@ -1540,7 +1549,7 @@
     </section>
 
     <!-- Problem Section -->
-    <section class="problem-section grid-pattern">
+    <section id="problem" class="problem-section grid-pattern">
         <div class="container">
             <h2 class="section-title">The Hidden Costs of Manual Deal Management</h2>
             <p class="section-subtitle">Every day your team struggles with these challenges costs you deals, time, and money</p>
@@ -1690,7 +1699,7 @@
     </div>
 
     <!-- Footer -->
-    <footer>
+    <footer id="footer">
         <div class="container">
             <p>&copy; <span id="current-year">2025</span> Signa. All rights reserved. | Built for global telecom carriers who demand excellence.</p>
             <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
@@ -1711,6 +1720,58 @@
                 posthog.capture('landing_page_loaded', { page: 'home', url: window.location.href });
             }
         });
+
+        // PostHog: track link clicks (delegated)
+        document.addEventListener('click', function(e) {
+            var link = e.target && e.target.closest('a');
+            if (!link || !window.posthog || typeof window.posthog.capture !== 'function') return;
+            var href = link.getAttribute('href') || '';
+            var linkText = (link.textContent || '').trim().slice(0, 100);
+            var location = 'page';
+            if (link.closest('header') || link.closest('#nav-links')) location = 'nav';
+            else if (link.closest('#hero')) location = 'hero';
+            else if (link.closest('#contact') || link.closest('.cta-section')) location = 'cta_section';
+            posthog.capture('link_clicked', {
+                link_text: linkText,
+                href: href,
+                link_location: location,
+                opens_modal: href === '#' && (link.getAttribute('onclick') || '').indexOf('openContactModal') !== -1
+            });
+        });
+
+        // PostHog: track section views (once per section per load)
+        (function() {
+            var sectionConfig = [
+                { id: 'hero', name: 'Hero' },
+                { id: 'features', name: 'Features' },
+                { id: 'problem', name: 'Problem' },
+                { id: 'benefits', name: 'Benefits' },
+                { id: 'contact', name: 'Contact CTA' },
+                { id: 'footer', name: 'Footer' }
+            ];
+            var seen = {};
+            function onSectionViewed(entry) {
+                var id = entry.target.id;
+                if (!id || seen[id] || !window.posthog || typeof window.posthog.capture !== 'function') return;
+                seen[id] = true;
+                var config = sectionConfig.find(function(c) { return c.id === id; });
+                posthog.capture('section_viewed', {
+                    section_id: id,
+                    section_name: config ? config.name : id
+                });
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) onSectionViewed(entry);
+                    });
+                }, { threshold: 0.2, rootMargin: '0px' });
+                sectionConfig.forEach(function(c) {
+                    var el = document.getElementById(c.id);
+                    if (el) observer.observe(el);
+                });
+            });
+        })();
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
