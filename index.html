@@ -57,6 +57,7 @@
             width: 100%;
             top: 0;
             z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             min-height: 96px;
         }
@@ -104,7 +105,7 @@
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 2.5rem;
             align-items: center;
         }
 
@@ -114,7 +115,7 @@
             color: #4a5568;
             font-weight: 600;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             padding: 0.5rem 0;
         }
@@ -209,6 +210,8 @@
             border: none;
             cursor: pointer;
             padding: 0;
+            z-index: 1001;
+            position: relative;
         }
 
         .hamburger-line {
@@ -216,7 +219,7 @@
             height: 3px;
             background: #4a5568;
             border-radius: 2px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: center;
         }
 
@@ -322,7 +325,7 @@
 
         .about-grid {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
             gap: 3rem;
             align-items: center;
         }
@@ -344,6 +347,7 @@
             font-weight: 700;
             margin-bottom: 1rem;
             color: #2d3748;
+            text-align: center;
         }
 
         .about-lead {
@@ -653,6 +657,10 @@
 
         /* Responsive */
         @media (max-width: 1024px) {
+            .hamburger-menu {
+                display: flex;
+            }
+
             .nav-links {
                 position: fixed;
                 top: 0;
@@ -665,17 +673,62 @@
                 justify-content: center;
                 align-items: center;
                 gap: 2rem;
-                transition: right 0.3s ease;
-                z-index: 900;
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1000;
+                padding: 0;
+                margin: 0;
+                display: flex;
             }
 
             .nav-links.active {
                 right: 0;
             }
 
-            .hamburger-menu {
-                display: flex;
-                z-index: 1001;
+            .nav-links li {
+                margin: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+
+            .nav-links a:hover {
+                background: rgba(102, 126, 234, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .nav-links a.nav-cta-button {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white !important;
+                padding: 1rem 2rem !important;
+                border-radius: 12px;
+                font-size: 1.1rem;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            }
+
+            .nav-links a.nav-cta-button:hover {
+                transform: translateY(-3px) scale(1.05);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            }
+
+            .mobile-logo {
+                margin-bottom: 1rem !important;
+            }
+
+            .mobile-logo .logo {
+                font-size: 2rem;
+                margin-bottom: 0;
+            }
+
+            .mobile-logo .logo-image {
+                height: 2.2rem;
+            }
+
+            .mobile-logo .by-text {
+                font-size: 1.1rem;
             }
 
             .hero-inner {
@@ -696,11 +749,29 @@
                 grid-template-columns: minmax(0, 1fr);
             }
 
+            .signature-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .signature-illustration {
+                order: 1;
+            }
+
+            .signature-text {
+                order: 2;
+            }
+
             .modal-content {
                 margin: 2vh auto;
                 width: 95%;
                 max-width: none;
                 max-height: 80vh;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .mobile-logo {
+                display: none;
             }
         }
 
@@ -731,6 +802,13 @@
             </button>
 
             <ul class="nav-links" id="nav-links">
+                <li class="mobile-logo">
+                    <div class="logo">
+                        <a href="index.html">
+                            <img src="images/signa_retina.png" alt="Signa Logo" class="logo-image">
+                        </a>
+                    </div>
+                </li>
                 <li><a href="signature.html#hero">Signature</a></li>
                 <!-- <li><a href="index.html" class="active-link">About Signa</a></li> -->
                 <li><a href="#" onclick="openContactModal(); return false;" class="nav-cta-button">Contact us
@@ -767,9 +845,6 @@
         <section class="about-section section-band">
             <div class="container">
                 <div class="about-grid">
-                    <div class="about-illustration">
-                        <img src="images/undraw_web-development_f0tp.svg" alt="Web development illustration">
-                    </div>
                     <div>
                         <h2 class="about-heading">Deep domain experience, pragmatic delivery</h2>
                         <p class="about-lead">
@@ -793,6 +868,9 @@
                                 <span><strong>Other complex domains.</strong> Inventory and catalogue management, booking and scheduling, and other places where software is tightly coupled to operations.</span>
                             </li>
                         </ul>
+                    </div>
+                    <div class="about-illustration">
+                        <img src="images/undraw_web-development_f0tp.svg" alt="Web development illustration">
                     </div>
                     <aside class="about-aside">
                         <h3>How we usually work</h3>
